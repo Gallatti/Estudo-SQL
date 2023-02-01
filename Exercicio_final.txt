@@ -1,0 +1,61 @@
+# Aplicando label encoding à variável menopausa
+
+SELECT DISTINCT menopausa FROM cap03.tb_dados;
+
+CREATE TABLE cap03.tb_dados3
+AS
+SELECT
+classe, idade,
+CASE
+	WHEN menopausa = 'premeno' THEN 1
+    WHEN menopausa = 'ge40' THEN 2
+    WHEN menopausa = 'lt40' THEN 3
+END as menopausa,
+tamanho_tumor,
+inv_nodes,
+node_caps,
+deg_malig,
+seio,
+quadrante,
+irradiando
+FROM cap03.tb_dados2;
+
+# Criando uma nova coluna concatenando as colunas (inv_nodes, quadrante), e nomeando-a de posição_tumor.
+
+SELECT * FROM cap03.tb_dados3
+
+CREATE TABLE cap03.tb_dados4
+AS
+SELECT
+classe, 
+idade, 
+menopausa,
+tamanho_tumor,
+CONCAT(inv_nodes, '-' , quadrante) AS posição_tumor,
+node_caps,
+deg_malig,
+seio,
+irradiando
+FROM cap03.tb_dados3;
+
+# Aplicando o One-Hot-Encoding na coluna deg_malig.
+
+SELECT * FROM cap03.tb_dados4;
+
+SELECT DISTINCT deg_malig FROM cap03.tb_dados4;
+
+CREATE TABLE cap03.tb_dados5
+AS
+SELECT
+classe,
+idade,
+menopausa,
+tamanho_tumor,
+posição_tumor,
+node_caps,
+CASE WHEN deg_malig = 1 THEN 1 ELSE 0 END AS deg_malig_cat1,
+CASE WHEN deg_malig = 2 THEN 1 ELSE 0 END AS deg_malig_cat2,
+CASE WHEN deg_malig = 3 THEN 1 ELSE 0 END AS deg_malig_cat3,
+seio,
+irradiando
+FROM cap03.tb_dados4;
